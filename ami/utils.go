@@ -52,7 +52,7 @@ func send(ctx context.Context, client Client, action, id string, v interface{}) 
 	return read(ctx, client)
 }
 
-func read(ctx context.Context, client Client) (Response, error) {
+func readRaw(ctx context.Context, client Client) (*bytes.Buffer, error) {
 	var buffer bytes.Buffer
 	for {
 		input, err := client.Recv(ctx)
@@ -64,7 +64,17 @@ func read(ctx context.Context, client Client) (Response, error) {
 			break
 		}
 	}
-	return parseResponse(buffer.String())
+
+	return &buffer, nil
+}
+
+func read(ctx context.Context, client Client) (Response, error) {
+	data, err := readRaw(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseResponse(data.String())
 }
 
 func parseResponse(input string) (Response, error) {

@@ -1,10 +1,72 @@
 package ami
 
-import "context"
+import (
+	"context"
+	"strings"
+)
 
 // Queues shows queues list
-func Queues(ctx context.Context, client Client, actionID string) (Response, error) {
-	return send(ctx, client, "Queues", actionID, nil)
+func Queues(ctx context.Context, client Client, actionID string) ([]Response, error) {
+	b, err := command("Queues", actionID, nil)
+	if err != nil {
+		return nil, err
+	}
+	if err := client.Send(string(b)); err != nil {
+		return nil, err
+	}
+
+	data, err := readRaw(ctx, client)
+	if err != nil {
+		return nil, err
+	}
+
+	blocks := strings.Split(data.String(), "\r\n\r\n")
+	response := make([]Response, 0)
+
+	for _, block := range blocks {
+		lines := strings.Split(block, "\n")
+		if len(lines) < 1 {
+			continue
+		}
+
+		headline := strings.TrimSpace(lines[0])
+		if len(headline) < 1 {
+			continue
+		}
+
+		queue := Response{
+			"Header": []string{headline},
+			"Queue":  []string{strings.SplitN(headline, " ", 2)[0]},
+		}
+
+		section := ""
+		for _, line := range lines[1:] {
+			line = strings.TrimSpace(line)
+			if len(line) < 1 {
+				continue
+			}
+
+			if line == "Members:" {
+				section = "Members"
+				continue
+			} else if line == "Callers:" {
+				section = "Callers"
+				continue
+			} else if line == "No Members" || line == "No Callers" {
+				section = ""
+				continue
+			}
+
+			if _, ok := queue[section]; !ok {
+				queue[section] = make([]string, 0)
+			}
+			queue[section] = append(queue[section], line)
+		}
+
+		response = append(response, queue)
+	}
+
+	return response, nil
 }
 
 // QueueAdd adds interface to queue.
