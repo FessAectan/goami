@@ -2,6 +2,11 @@ package ami
 
 import "context"
 
+// Queues shows queues list
+func Queues(ctx context.Context, client Client, actionID string) (Response, error) {
+	return send(ctx, client, "Queues", actionID, nil)
+}
+
 // QueueAdd adds interface to queue.
 func QueueAdd(ctx context.Context, client Client, actionID string, queueData QueueData) (Response, error) {
 	return send(ctx, client, "QueueAdd", actionID, queueData)
