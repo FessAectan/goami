@@ -60,7 +60,7 @@ func readRaw(ctx context.Context, client Client) (*bytes.Buffer, error) {
 			return nil, err
 		}
 		buffer.WriteString(input)
-		if strings.HasSuffix(buffer.String(), "\r\n\r\n") {
+		if buffer.Len() > 4 && strings.HasSuffix(buffer.String(), "\r\n\r\n") {
 			break
 		}
 	}
