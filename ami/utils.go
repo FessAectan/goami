@@ -108,6 +108,10 @@ func requestList(ctx context.Context, client Client, action, id, event, complete
 		if err != nil {
 			return nil, err
 		}
+		if rsp.Get("EventList") == "start" {
+			continue
+		}
+
 		e := rsp.Get("Event")
 		r := rsp.Get("Response")
 		if e == event {
@@ -142,6 +146,11 @@ func requestMultiEvent(ctx context.Context, client Client, action, id string, ev
 		if err != nil {
 			return nil, err
 		}
+
+		if rsp.Get("EventList") == "start" {
+			continue
+		}
+
 		e := rsp.Get("Event")
 		r := rsp.Get("Response")
 
@@ -150,6 +159,8 @@ func requestMultiEvent(ctx context.Context, client Client, action, id string, ev
 			response = append(response, rsp)
 		} else if e == complete || r != "" && r != "Success" {
 			break
+		} else {
+			fmt.Printf("Unexpected event: %s %v\n", e, rsp)
 		}
 	}
 	return response, nil

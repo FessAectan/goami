@@ -28,8 +28,8 @@ func BridgeDestroy(ctx context.Context, client Client, actionID, bridgeUniqueID 
 }
 
 // BridgeInfo get information about a bridge.
-func BridgeInfo(ctx context.Context, client Client, actionID, bridgeUniqueID string) (Response, error) {
-	return send(ctx, client, "BridgeInfo", actionID, map[string]string{
+func BridgeInfo(ctx context.Context, client Client, actionID, bridgeUniqueID string) ([]Response, error) {
+	return requestList(ctx, client, "BridgeInfo", actionID, "BridgeInfoChannel", "BridgeInfoComplete", map[string]string{
 		"BridgeUniqueid": bridgeUniqueID,
 	})
 }
@@ -46,8 +46,8 @@ func BridgeKick(ctx context.Context, client Client, actionID, bridgeUniqueID, ch
 }
 
 // BridgeList get a list of bridges in the system.
-func BridgeList(ctx context.Context, client Client, actionID, bridgeType string) (Response, error) {
-	return send(ctx, client, "BridgeList", actionID, map[string]string{
+func BridgeList(ctx context.Context, client Client, actionID, bridgeType string) ([]Response, error) {
+	return requestList(ctx, client, "BridgeList", actionID, "BridgeListItem", "BridgeListComplete", map[string]string{
 		"BridgeType": bridgeType,
 	})
 }

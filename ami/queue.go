@@ -53,8 +53,7 @@ func Queues(ctx context.Context, client Client, actionID string) ([]Response, er
 				section = "Callers"
 				continue
 			} else if line == "No Members" || line == "No Callers" {
-				section = ""
-				continue
+				section = strings.ReplaceAll(line, " ", "")
 			}
 
 			if _, ok := queue[section]; !ok {
@@ -121,7 +120,7 @@ func QueueStatus(ctx context.Context, client Client, actionID, queue, member str
 
 // QueueStatuses show status all members in queue.
 func QueueStatuses(ctx context.Context, client Client, actionID, queue string) ([]Response, error) {
-	return requestMultiEvent(ctx, client, "QueueStatus", actionID, []string{"QueueMember", "QueueEntry"}, "QueueStatusComplete", map[string]string{
+	return requestMultiEvent(ctx, client, "QueueStatus", actionID, []string{"QueueMember", "QueueParams", "QueueEntry"}, "QueueStatusComplete", map[string]string{
 		"Queue": queue,
 	})
 }
