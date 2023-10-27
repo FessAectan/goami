@@ -117,6 +117,8 @@ type QueueData struct {
 	Interface      string `ami:"Interface,omitempty"`
 	Penalty        string `ami:"Penalty,omitempty"`
 	LoginTime      string `ami:"LoginTime,omitempty"`
+	Wrapuptime     string `ami:"Wrapuptime,omitempty"`
+	LastPause      string `ami:"LastPause,omitempty"`
 	Paused         string `ami:"Paused,omitempty"`
 	MemberName     string `ami:"MemberName,omitempty"`
 	StateInterface string `ami:"StateInterface,omitempty"`
